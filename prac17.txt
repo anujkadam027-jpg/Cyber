@@ -1,0 +1,131 @@
+# Practical 9: Cross-Site Scripting (XSS) Attack Demonstration
+
+Aim: Inject malicious JavaScript in vulnerable form fields.
+
+## Step 1: Open Kali Linux and start DVWA services
+
+Your provided image shows that you are already in the Kali Linux terminal, inside the DVWA directory.
+
+1\. Navigate to the web directory
+
+```
+cd /var/www/html/
+```
+
+→ Opens the directory where the local web applications are stored.
+
+2\. List the available files and folders
+
+```
+ls
+```
+
+→ Displays the available directories, including `DVWA`.
+
+3\. Open the DVWA directory
+
+```
+cd DVWA
+```
+
+→ Moves into the DVWA application directory.
+
+4\. Start the MySQL/MariaDB database service
+
+```
+systemctl start mysql
+```
+
+→ Starts the database service required by DVWA.
+
+If an error occurs, try:
+
+```
+systemctl start mariadb
+```
+
+→ Starts MariaDB if your Kali installation uses that service name.
+
+5\. Start the Apache web server
+
+```
+service apache2 start
+```
+
+→ Starts the web server that hosts DVWA.
+
+If an error occurs, try:
+
+```
+systemctl status apache2
+```
+
+→ Shows whether Apache is running and provides details if it failed.
+
+## Step 2: Open DVWA in Firefox
+
+1. Open Firefox inside Kali Linux.
+2. Enter the following address:
+
+```
+http://localhost/DVWA/
+```
+
+→ Opens the local DVWA application.
+
+If that address does not work, try:
+
+```
+http://127.0.0.1/DVWA/
+```
+
+## Step 3: Log in to DVWA
+
+Enter your configured lab credentials. The standard default credentials are often:
+
+- Username: `admin`
+- Password: `password`
+
+Click Login.
+
+## Step 4: Set the security level
+
+1. Click DVWA Security in the left-side menu.
+2. Select Low from the security-level dropdown for this local lab exercise.
+3. Click Submit.
+
+## Step 5: Open the XSS section
+
+1. Find XSS (Reflected) in the left-side menu.
+2. Click it.
+3. Locate the input field displayed on the page.
+
+## Step 6: Enter the test input
+
+In the local DVWA input field, enter this test string:
+
+```
+<script>alert('XSS Test')</script>
+```
+
+→ This tests whether the vulnerable form executes JavaScript in the browser.
+
+Click Submit and observe the result.
+
+## Step 7: Record the observation
+
+- If an alert displaying `XSS Test` appears, record that the input executed as JavaScript.
+- If the input is displayed as text or rejected, record that result instead.
+
+## Step 8: Restore the application
+
+1. Close the alert, if one appears.
+2. Return to DVWA Security.
+3. Restore your lab's normal security setting and click Submit.
+4. Close the browser when finished.
+
+## Result
+
+Cross-Site Scripting testing was performed on the local DVWA application. The submitted input and the application's response were observed to evaluate how the application handled JavaScript input.
+
+Your next action: Complete Step 1 using the commands above. Since your screenshot shows the services have already been started, you can now proceed to Step 2 and open DVWA in Firefox.

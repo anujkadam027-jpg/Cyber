@@ -1,0 +1,42 @@
+
+from Crypto.PublicKey import RSA
+from Crypto.Signature import pkcs1_15
+from Crypto.Hash import SHA256
+
+key = RSA.generate(2048)
+private = key
+public = key.publickey()
+
+msg = input("Enter your message: ")
+h = SHA256.new(msg.encode())
+sig = pkcs1_15.new(private).sign(h)
+
+print("\nDigital signature created!")
+
+# Case 1: Original message
+print("\nCase 1: Original message")
+try:
+    pkcs1_15.new(public).verify(h, sig)
+    print("Integrity maintained")
+    print("Non-repudiation supported")
+except (ValueError, TypeError):
+    print("Verification failed")
+
+# Case 2: Modified message
+print("\nCase 2: Modified message")
+mod = input("Enter modified message: ")
+try:
+    pkcs1_15.new(public).verify(SHA256.new(mod.encode()), sig)
+    print("Integrity maintained")
+except (ValueError, TypeError):
+    print("Integrity failed")
+
+# Case 3: Wrong sender
+print("\nCase 3: Wrong sender")
+other = RSA.generate(2048).publickey()
+try:
+    pkcs1_15.new(other).verify(h, sig)
+    print("Signature verified")
+except (ValueError, TypeError):
+    print("Non-repudiation failed")
+    print("Signature does not belong to this sender")

@@ -1,0 +1,35 @@
+class RSA:
+    def __init__(self):
+        print("\nRSA Encryption Algorithm")
+
+        p = int(input("Enter prime number P: "))
+        q = int(input("Enter prime number Q: "))
+
+        n = p * q
+        phi = (p - 1) * (q - 1)
+
+        print("N =", n)
+        print("Factor =", phi)
+
+        e = int(input("Enter public key E: "))
+        d = pow(e, -1, phi)
+
+        print("Public key =", (n, e))
+        print("Private key =", (n, d))
+
+        msg = input("Enter plaintext character: ").upper()
+        pt = ord(msg) - ord('A') + 1
+
+        print("Plaintext value =", pt)
+
+        ct = pow(pt, e, n)
+        print("Ciphertext =", ct)
+
+        pt = pow(ct, d, n)
+        print("Decrypted value =", pt)
+
+        print("Decrypted character =", chr(pt + ord('A') - 1))
+
+
+if __name__ == "__main__":
+    RSA()

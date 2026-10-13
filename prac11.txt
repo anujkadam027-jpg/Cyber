@@ -1,0 +1,17 @@
+
+import hashlib
+
+m1 = input("Enter first message: ")
+m2 = input("Enter second message: ")
+
+h1 = hashlib.sha256(m1.encode()).hexdigest()
+h2 = hashlib.sha256(m2.encode()).hexdigest()
+
+print("\nHash of message 1:", h1)
+print("Hash of message 2:", h2)
+
+if h1 == h2:
+    print("Collision found!")
+else:
+    print("No collision found.")
+    print("Collision resistance demonstrated.")

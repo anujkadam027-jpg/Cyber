@@ -1,0 +1,37 @@
+# Practical 2: SQL Injection using DVWA
+
+Aim: Demonstrate SQL Injection vulnerability in a controlled DVWA application.
+
+## Steps
+
+1. Open the Kali Linux terminal.
+2. Navigate to the web-server directory.
+   ```
+   cd /var/www/html/
+   ```
+   → Opens the web-server directory.
+3. Open the DVWA directory.
+   ```
+   cd DVWA
+   ```
+   → Opens the DVWA folder.
+4. Start the database service.
+   ```
+   systemctl start mariadb
+   ```
+   → If an error occurs, try `systemctl start mysql`.
+5. Start the Apache web service.
+   ```
+   systemctl start apache2
+   ```
+6. Open Firefox and visit `http://localhost/DVWA/`.
+7. Log in using:
+   - Username: `admin`
+   - Password: `password`
+8. Open DVWA Security, select the required security level, and click Submit.
+9. Open the SQL Injection section.
+10. Enter the test input `1` and click Submit.
+11. Observe the response and identify how the application handles the input.
+12. Record your observations and take screenshots.
+
+Result: SQL Injection testing was performed on DVWA, and the application's response to the test input was observed.

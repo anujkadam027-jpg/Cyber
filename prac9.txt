@@ -1,0 +1,85 @@
+# Module 2 — Practical 1
+
+Aim: Web Application Vulnerability Testing using OWASP ZAP.&#x20;
+
+CS Practical Final(2).docx
+
+
+
+The original document lists the workflow below. It does not specify terminal commands for every step, so I've kept those steps as written and marked any added commands as helpful setup commands rather than commands extracted from the file.
+
+## Steps extracted and organized
+
+Step 1. Install and launch OWASP ZAP.
+
+The file does not provide a terminal installation command. For a Kali Linux machine, the following is an additional installation option:
+
+```
+>> sudo apt update
+>> sudo apt install zaproxy -y
+```
+
+Launch it from the application menu by searching for OWASP ZAP. If the command-line launcher is available, you can try:
+
+```
+>> zaproxy
+```
+
+Step 2. Open the Automated Scan option.
+
+- Launch OWASP ZAP.
+- Select Automated Scan from the main screen.
+
+Step 3. Enter the URL of the authorized test application.
+
+- Enter the URL of your own test application or an application you have permission to scan.
+- For a local test application, use its actual local URL.
+
+Step 4. Select the required scanning options.
+
+- Review the available scan options.
+- Choose the appropriate options for your lab.
+
+Step 5. Start the scan.
+
+\- Click Attack or the relevant scan-start button displayed in your ZAP version.
+
+Step 6. Allow ZAP to crawl and test the application.
+
+- Wait for the scan to proceed.
+- Observe the progress and requests in the ZAP interface.
+
+Step 7. Open the Alerts section.
+
+\- Navigate to the Alerts tab.
+
+Step 8. Review the detected vulnerabilities.
+
+- Select individual alerts.
+- Review their descriptions and evidence.
+
+Step 9. Examine the risk level and details of each finding.
+
+\- Review the risk level, URL, description, and recommended solution for each finding.
+
+Step 10. Generate the ZAP scanning report.
+
+- Open the Report menu or reporting option available in your installed version.
+- Choose the appropriate report format.
+
+Step 11. Save the report for documentation.
+
+- Save the generated report to your chosen folder.
+- Keep it as evidence of your practical.
+
+## Quick command revision
+
+These are the additional terminal commands above, not commands explicitly printed in the practical document:
+
+```
+>> sudo apt update
+>> sudo apt install zaproxy -y
+>> zaproxy
+```
+
+Note: The installation commands may not work on every Ubuntu or Kali release if the package is unavailable in the configured repositories. Also, because you're using a Google Cloud VM, launching ZAP's graphical interface may require a desktop environment; the practical's original workflow is GUI-based.

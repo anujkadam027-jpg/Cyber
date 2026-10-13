@@ -1,0 +1,29 @@
+
+from PIL import Image
+
+img = Image.open(input("Enter image name: "))
+
+msg = input("Enter one character to hide: ")
+binary = format(ord(msg), '08b')
+pixels = img.load()
+
+# Hide character
+for i in range(8):
+    p = list(pixels[i, 0])
+    p[0] = (p[0] & ~1) | int(binary[i])
+    pixels[i, 0] = tuple(p)
+
+img.save("stegobutterfly.png")
+print("Message hidden successfully!")
+
+# Extract character
+img = Image.open("stegobutterfly.png")
+pixels = img.load()
+
+binary = ""
+for i in range(8):
+    binary += str(pixels[i, 0][0] & 1)
+
+print("Hidden character:", chr(int(binary, 2)))
+
+pip install Pillow
