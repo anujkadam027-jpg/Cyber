@@ -1,0 +1,68 @@
+## Practical 4 — DNS Enumeration and WHOIS Lookup
+
+Based on your college practical file, Practical 4 covers DNS enumeration and WHOIS lookup. We'll keep the same steps and commands, with the expected troubleshooting notes for Ubuntu.
+
+Aim: DNS Enumeration and WHOIS Lookup
+
+### Step 1: Open the terminal and start `nslookup`
+
+```
+nslookup
+```
+
+### Step 2: Query the CNAME record
+
+At the `nslookup` prompt, enter:
+
+```
+set type=cname
+certifiedhacker.com
+```
+
+### Step 3: Query the A record
+
+```
+set type=a
+ns1.bluehost.com
+```
+
+This requests the IPv4 address associated with the hostname.
+
+### Step 4: View DNS records using `dig`
+
+Exit `nslookup` by typing `exit`, then run:
+
+```
+dig www.certifiedhacker.com
+```
+
+### Step 5: Look up domain registration details
+
+```
+whois certifiedhacker.com
+```
+
+### Step 6: Look up IP/network registration information
+
+```
+whois 172.16.9.129
+```
+
+These are the remaining steps from your college file.&#x20;
+
+CS Practical Final(1).docx
+
+
+
+## If commands don't work on Ubuntu
+
+Install the required tools:
+
+```
+sudo apt update
+sudo apt install dnsutils whois -y
+```
+
+If `nslookup` says the command is not found, `dnsutils` provides it on many Ubuntu versions; newer releases may use the `bind9-dnsutils` package instead.
+
+Quick revision: `nslookup` = DNS query, `dig` = detailed DNS records, `whois` = domain/IP registration details.

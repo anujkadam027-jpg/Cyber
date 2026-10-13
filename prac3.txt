@@ -1,0 +1,41 @@
+# Practical 3: Packet Analysis using Wireshark
+
+Aim: Packet Analysis using Wireshark.
+
+Objective: Inspect TCP handshake, HTTP requests, and DNS queries.
+
+Tool Used: Wireshark
+
+## Procedure
+
+1\. Open the Wireshark application on the computer.
+
+2\. Select the Wi-Fi network interface to capture network packets.
+
+3\. Double-click the Wi-Fi interface to start capturing packets.
+
+4\. Wait for a few seconds to allow network packets to appear in the packet list.
+
+5\. Open a web browser and visit `https://example.com` to generate network traffic.
+
+6\. Return to Wireshark and locate the display filter box at the top of the window.
+
+7\. Type `tcp` in the display filter box and press Enter to display TCP packets.
+
+8\. Select any packet from the packet list whose protocol is TCP.
+
+9\. Right-click the selected TCP packet.
+
+10\. Select Follow → TCP Stream from the context menu.
+
+11\. The Follow TCP Stream window will open and display the TCP communication between the devices.
+
+12\. Observe the displayed data. The communication may contain unreadable characters if the traffic is encrypted using TLS.
+
+13\. Close the Follow TCP Stream window after observing the communication.
+
+14\. Stop the packet capture by clicking the red square Stop button in the Wireshark toolbar.
+
+## Result
+
+Packet analysis was performed successfully using Wireshark. TCP packets were captured and inspected, and the Follow TCP Stream feature was used to observe the TCP communication.

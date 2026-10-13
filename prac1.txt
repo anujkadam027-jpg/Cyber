@@ -1,0 +1,48 @@
+# Module 1 — Practical 1: Installation and Configuration of Kali Linux
+
+Aim: Installation and Configuration of Kali Linux.
+
+## Steps
+
+### A. Installing VMware Workstation Pro
+
+1. Download VMware Workstation Pro.
+2. Run the installer.
+3. Follow the on-screen instructions and accept the license agreement.
+4. Choose Typical Installation.
+5. Click Install, then Finish.
+
+### B. Creating a New Virtual Machine
+
+1. Open VMware Workstation Pro.
+2. Click Create a New Virtual Machine.
+3. Select Typical (Recommended) and click Next.
+4. Select the Kali Linux ISO file as the installation media.
+5. Click Next and proceed with the virtual machine configuration.
+6. Enter the virtual machine name and select the location to save it.
+
+### C. Customizing Hardware
+
+1. Click Customize Hardware.
+2. Allocate at least 4 GB RAM (8 GB or more recommended).
+3. Assign 2 or more processor cores.
+4. Enable virtualization (VT-x/AMD-V).
+5. Set the Network Adapter to Bridged or NAT mode.
+6. Click Close and then Finish.
+
+### D. Installing Kali Linux
+
+1. Start the virtual machine and boot from the ISO.
+2. Select Graphical Install.
+3. Choose the language, location, and keyboard layout.
+4. Enter a hostname, for example, `kali`.
+5. Set a strong password.
+6. Select Use entire disk for partitioning.
+7. Confirm the disk partition and continue.
+8. Wait for the installation to complete.
+9. Follow the remaining on-screen instructions and restart the virtual machine when prompted.
+10. Log in to Kali Linux after the system restarts.
+
+### Result
+
+Kali Linux was installed and configured successfully in VMware Workstation Pro.

@@ -1,0 +1,193 @@
+# Practical 7: Log Analysis and Incident Identification
+
+Aim: Analyze authentication logs and identify failed login/brute-force attempts.
+
+## Step 1: Start the SSH service
+
+Start the SSH service.
+
+```
+>> sudo systemctl start ssh
+```
+
+Verify that the service is running.
+
+```
+>> sudo systemctl status ssh
+```
+
+Press `q` to exit the status screen.
+
+## Step 2: Enable the SSH service
+
+Enable SSH to start automatically when the system boots.
+
+```
+>> sudo systemctl enable ssh
+```
+
+## Step 3: Create or configure the test user and password
+
+Check whether the test user exists.
+
+```
+>> id student
+```
+
+If the user does not exist, create the account.
+
+```
+>> sudo adduser student
+```
+
+When prompted, enter the password specified in the practical:
+
+```
+student
+```
+
+Check the account's password status.
+
+```
+>> sudo passwd -S student
+```
+
+Note: The `student` account has already been created on your VM, so you do not need to create it again.
+
+## Step 4: Attempt SSH login
+
+Attempt to connect to the SSH server using the test account.
+
+```
+>> ssh student@localhost
+```
+
+Observation: Password authentication is currently disabled on your Google Cloud VM. Therefore, this command may fail without prompting for a password. A genuine password-login test requires password authentication to be configured appropriately.
+
+## Step 5: Generate controlled failed authentication attempts
+
+Check the current SSH authentication settings.
+
+```
+>> sudo sshd -T | grep -E '^(passwordauthentication|pubkeyauthentication|kbdinteractiveauthentication)'
+```
+
+Your current settings are:
+
+```
+pubkeyauthentication yes
+passwordauthentication no
+kbdinteractiveauthentication no
+```
+
+Generate a controlled invalid-user authentication attempt.
+
+```
+>> ssh -o StrictHostKeyChecking=accept-new -o PreferredAuthentications=publickey -o PubkeyAuthentication=yes nonexistentlabuser@localhost
+```
+
+Expected result:
+
+```
+Permission denied (publickey).
+```
+
+Check whether the event was recorded.
+
+```
+>> sudo journalctl -u ssh --since "30 minutes ago" --no-pager | grep -F "Invalid user nonexistentlabuser"
+```
+
+Count the controlled invalid-user events.
+
+```
+>> sudo journalctl -u ssh --since "30 minutes ago" --no-pager | grep -F "Invalid user nonexistentlabuser" | wc -l
+```
+
+Observation: Your earlier test produced one invalid-user event from `127.0.0.1`. This is an invalid-user attempt, not a failed-password attempt. The failed-password requirement remains pending.
+
+## Step 6: Open the system journal using `journalctl`
+
+Display SSH logs from the last 30 minutes.
+
+```
+>> sudo journalctl -u ssh --since "30 minutes ago" --no-pager
+```
+
+Display SSH logs from the last hour.
+
+```
+>> sudo journalctl -u ssh --since "1 hour ago" --no-pager
+```
+
+## Step 7: Filter logs for `Failed password` entries
+
+Display failed-password authentication events from the last hour.
+
+```
+>> sudo journalctl -u ssh --since "1 hour ago" --no-pager | grep -F "Failed password"
+```
+
+To view multiple authentication-related events, run:
+
+```
+>> sudo journalctl -u ssh --since "1 hour ago" --no-pager | grep -E 'Invalid user|Failed password|Failed publickey|Accepted publickey'
+```
+
+Observation: Your previous output showed invalid-user attempts and a successful public-key login. No `Failed password` entries were found in that check.
+
+## Step 8: Identify the source IP address, username, and number of failed attempts
+
+Run the following command to display failed-password entries.
+
+```
+>> sudo journalctl -u ssh --since "1 hour ago" --no-pager | grep -F "Failed password"
+```
+
+Example log entry for understanding the output:
+
+```
+Failed password for student from 192.0.2.10 port 45678 ssh2
+```
+
+From this illustrative example:
+
+- Username: `student`
+- Source IP address: `192.0.2.10`
+- Event: Failed password authentication
+
+Note: The example IP address is illustrative and is not an actual event from your VM. Record the details shown in your own logs.
+
+## Step 9: Count the failed authentication entries
+
+Count failed-password entries from the last hour.
+
+```
+>> sudo journalctl -u ssh --since "1 hour ago" --no-pager | grep -F "Failed password" | wc -l
+```
+
+The output gives the number of matching failed-password entries. If the result is `0`, no matching entries were found during that period.
+
+To count invalid-user events separately, run:
+
+```
+>> sudo journalctl -u ssh --since "30 minutes ago" --no-pager | grep -F "Invalid user nonexistentlabuser" | wc -l
+```
+
+Your earlier result was `1`.
+
+## Final completion status
+
+| Step                                       | Status                                               |
+| ------------------------------------------ | ---------------------------------------------------- |
+| 1. Start SSH service                       | Complete                                             |
+| 2. Enable SSH service                      | Complete                                             |
+| 3. Create test user                        | Complete                                             |
+| 4. Attempt SSH login                       | Attempt performed; password-login test pending       |
+| 5. Generate failed authentication attempts | Partially complete                                   |
+| 6. View system journal                     | Complete                                             |
+| 7. Filter failed-password entries          | Command tested; no matching entries found            |
+| 8. Identify IP and username                | Complete for observed invalid-user events            |
+| 9. Count failed-password entries           | Command ready; genuine failed-password count pending |
+
+Conclusion: The SSH setup and log-analysis portions have been performed. To complete Practical 7 exactly as specified, you still need to generate and verify at least one genuine `Failed password` event in a controlled lab. Keep your current SSH configuration unchanged until you have a safe way to perform that test.

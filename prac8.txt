@@ -1,0 +1,197 @@
+# Practical 8: Intrusion Detection using Snort
+
+Aim: Detect malicious traffic using custom Snort rules.
+
+Below are the commands from your practical file, arranged in order with a simple explanation and troubleshooting commands below each step.&#x20;
+
+CS Practical Final (1).docx
+
+
+
+## Step 1: Install Snort
+
+Command 1:
+
+```
+sudo apt install snort -y
+```
+
+→ Installs Snort and its required packages on Kali Linux.
+
+If an error occurs:
+
+```
+sudo apt update
+```
+
+→ Updates the package list. After it finishes, run the installation command again.
+
+## Step 2: Check the Snort version
+
+Command 2:
+
+```
+snort -V
+```
+
+→ Displays the installed Snort version.
+
+If an error occurs:
+
+```
+sudo apt install snort -y
+```
+
+→ Runs the installation again if Snort is missing.
+
+## Step 3: Check the network interface
+
+Command 3:
+
+```
+ip a
+```
+
+→ Displays network interfaces and their IP addresses. Find your active interface, such as `eth0` or `ens33`.
+
+If an error occurs:
+
+```
+sudo ip link show
+```
+
+→ Lists the available network interfaces.
+
+## Step 4: Open the Snort configuration file
+
+Command 4:
+
+```
+sudo nano /etc/snort/snort.lua
+```
+
+→ Opens the Snort configuration file for editing.
+
+If an error occurs:
+
+```
+ls /etc/snort/
+```
+
+→ Lists the files in the Snort configuration directory. Check whether `snort.lua` exists.
+
+## Step 5: Configure the network variables
+
+Inside the configuration file, find the network variables section and configure the network according to your lab.
+
+For example, the local network might be `192.168.1.0/24`, but you should use the network shown by your `ip a` output.
+
+→ Save the file using Ctrl + O, press Enter, then exit using Ctrl + X.
+
+If an error occurs: Check the file permissions and confirm that you opened it with `sudo`.
+
+## Step 6: Open the local rules file
+
+Command 5:
+
+```
+sudo nano /etc/snort/rules/local.rules
+```
+
+→ Opens the file where you add your custom detection rules.
+
+If an error occurs:
+
+```
+sudo mkdir -p /etc/snort/rules
+```
+
+→ Creates the rules directory if it does not exist. Then run the `nano` command again.
+
+## Step 7: Add custom detection rules
+
+Inside `local.rules`, enter these rules from the practical.
+
+Rule 1 — Detect ICMP ping traffic:
+
+```
+alert icmp any any -> any any (msg:"ICMP Ping Detected"; sid:1000001; rev:1;)
+```
+
+→ Generates an alert when ICMP traffic, such as ping requests, matches the rule.
+
+Rule 2 — Detect HTTP traffic to port 80:
+
+```
+alert tcp any any -> any 80 (msg:"HTTP Traffic Detected"; sid:1000002; rev:1;)
+```
+
+→ Generates an alert when TCP traffic destined for port 80 matches the rule.
+
+Save the file using Ctrl + O, press Enter, then exit using Ctrl + X.
+
+If an error occurs: Check that each rule is on one line and ends with `;)`.
+
+## Step 8: Start Snort
+
+First, check your interface name using `ip a`. Replace `eth0` below if your active interface has a different name.
+
+Command 6:
+
+```
+sudo snort -c /etc/snort/snort.lua -i eth0
+```
+
+→ Starts Snort using the configuration file and selected network interface.
+
+If an error occurs:
+
+```
+sudo snort -c /etc/snort/snort.lua -T
+```
+
+→ Tests the Snort configuration. Read the error message to identify any configuration or rule problems.
+
+## Step 9: Generate test traffic
+
+Open a second terminal while Snort is running.
+
+Command 7:
+
+```
+ping -c 4 8.8.8.8
+```
+
+→ Sends four ICMP ping requests to generate test traffic.
+
+If an error occurs: Check your internet connection and network interface. If ping is blocked by the network, use another authorized lab destination.
+
+## Step 10: Observe Snort alerts
+
+Return to the terminal running Snort.
+
+→ Look for alerts containing `ICMP Ping Detected` or `HTTP Traffic Detected`, depending on the traffic captured and rules loaded.
+
+If no alerts appear:
+
+1. Check that your active interface name is correct.
+2. Verify that `local.rules` is included in the Snort configuration.
+3. Confirm that the configuration test passes.
+4. Generate the test traffic again.
+
+Important: The HTTP rule detects traffic to destination port 80, not ordinary HTTPS traffic on port 443.
+
+## Quick command list
+
+| Step                  | Command                                      |
+| --------------------- | -------------------------------------------- |
+| Install Snort         | `sudo apt install snort -y`                  |
+| Check version         | `snort -V`                                   |
+| Check interfaces      | `ip a`                                       |
+| Open configuration    | `sudo nano /etc/snort/snort.lua`             |
+| Open local rules      | `sudo nano /etc/snort/rules/local.rules`     |
+| Start Snort           | `sudo snort -c /etc/snort/snort.lua -i eth0` |
+| Test configuration    | `sudo snort -c /etc/snort/snort.lua -T`      |
+| Generate test traffic | `ping -c 4 8.8.8.8`                          |
+
+Note: Your practical file uses Snort 3 (`snort.lua`). If a command fails, use the troubleshooting command listed beneath that step and check the exact error before changing the configuration.

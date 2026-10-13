@@ -1,0 +1,134 @@
+I found your CS Practical Final.docx. It contains cybersecurity practicals for T.Y.B.Sc. Data Science, Semester V, Minor: Cyber Security.
+
+The document includes multiple practicals, so I'll start with the original content of Practical 5, preserving its aim, steps, and commands.
+
+## Practical 5 — Password Cracking using John the Ripper
+
+Source: CS Practical Final.docx
+
+Aim: Password Cracking using John the Ripper
+
+Objective: Crack weak passwords from sample hash file and analyze time complexity.
+
+### Steps
+
+1\. Check the John the Ripper installation/version.
+
+```
+john --version
+```
+
+2\. Install John the Ripper if required.
+
+```
+sudo apt install john -y
+```
+
+3\. Create a working directory for the password laboratory.
+
+```
+mkdir PasswordLab
+```
+
+4\. Change to the working directory.
+
+```
+cd PasswordLab
+```
+
+5\. Generate MD5 hashes for the sample passwords using the `openssl dgst -md5` command.
+
+```
+echo -n "admin123" | openssl dgst -md5 >> hash.txt
+echo -n "hello123" | openssl dgst -md5 >> hash.txt
+echo -n "Password1" | openssl dgst -md5 >> hash.txt
+```
+
+6\. Save the generated hashes into `hash.txt` and verify them using `cat hash.txt`.
+
+```
+cat hash.txt
+```
+
+7\. Locate the RockYou wordlist in `/usr/share/wordlists/`.
+
+8\. Run John the Ripper with the RockYou wordlist against `hash.txt`.
+
+```
+john --format=raw-md5 --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
+```
+
+9\. Observe the recovered passwords and the time/CPU statistics displayed by John the Ripper.
+
+CS Practical Final(1).docx
+
+Important: This is the content from your college document. During our Google Cloud practice, we had to build John Jumbo because the installed version did not support `raw-md5`. We also used a custom wordlist because the RockYou wordlist was unavailable on that VM. Those were troubleshooting steps, not part of the original practical.
+
+## Practical 5 — If John the Ripper doesn't work
+
+If the normal installation doesn't support `raw-md5`, follow these steps in order.
+
+Step 1: Install the required tools
+
+```
+sudo apt update
+sudo apt install john git build-essential libssl-dev -y
+```
+
+Step 2: Download John Jumbo
+
+```
+git clone --depth 1 https://github.com/openwall/john.git ~/john-source
+```
+
+Step 3: Configure and build it
+
+```
+cd ~/john-source/src
+./configure
+make -sj2
+```
+
+Step 4: Return to your practical folder
+
+```
+cd ~/PasswordLab
+```
+
+Step 5: Create a small test wordlist
+
+```
+printf '%s\n' admin123 hello123 Password1 > lab-words.txt
+```
+
+Step 6: Crack the hashes
+
+```
+~/john-source/run/john --format=raw-md5 --wordlist=/home/anujkadam62/PasswordLab/lab-words.txt /home/anujkadam62/PasswordLab/hashes.txt
+```
+
+Step 7: Show the results
+
+```
+~/john-source/run/john --show --format=Raw-MD5 hashes.txt
+```
+
+Expected result:
+
+```
+?:admin123
+?:hello123
+?:Password1
+
+3 password hashes cracked, 0 left
+```
+
+### Remember for the exam
+
+- First try the original practical commands.
+- If `john --version` fails, install John.
+- If `raw-md5` is unsupported, use John Jumbo only if you have time and internet access.
+- If `/usr/share/wordlists/rockyou.txt` is missing, locate an available wordlist or use a test wordlist containing your sample passwords.
+- If compilation takes too long, don't repeatedly clean and rebuild.
+
+Important: The `/home/anujkadam62/` path is specific to your cloud VM. On the exam PC, use the actual username's home directory.

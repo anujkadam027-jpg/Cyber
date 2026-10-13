@@ -1,0 +1,315 @@
+# Practical 6: Firewall Configuration in Linux Using iptables
+
+Aim: To configure firewall rules using `iptables` to control network traffic.
+
+Platform used: Google Cloud VM running Ubuntu Linux.
+
+Objective: To inspect existing firewall rules, allow required traffic, block selected ports, and verify network connectivity.
+
+## Step 1: Log in and check root privileges
+
+Log in to the Ubuntu machine through SSH. Check whether administrative privileges are available.
+
+```
+sudo whoami
+```
+
+Expected output:
+
+```
+root
+```
+
+If the output is `root`, administrative access is confirmed. On Ubuntu, use `sudo` before commands that require root privileges.
+
+## Step 2: Check network configuration
+
+First, try the command specified in the practical:
+
+```
+ifconfig
+```
+
+If Ubuntu displays `ifconfig: command not found`, install the required package:
+
+```
+sudo apt update
+sudo apt install net-tools -y
+```
+
+Now run:
+
+```
+ifconfig
+```
+
+What we observed: The command displayed these network interfaces:
+
+- `ens4` — the VM's primary network interface.
+- `docker0` — Docker's virtual network interface.
+- `lo` — the loopback interface, with IP address `127.0.0.1`.
+
+## Step 3: Display the existing firewall rules
+
+Run:
+
+```
+sudo iptables -L -n -v
+```
+
+Purpose of the options:
+
+- `-L` — lists firewall chains and rules.
+- `-n` — displays IP addresses and ports numerically.
+- `-v` — displays detailed information, including packet and byte counters.
+
+Initial observations:
+
+| Chain     | Initial policy |
+| --------- | -------------- |
+| `INPUT`   | `ACCEPT`       |
+| `OUTPUT`  | `ACCEPT`       |
+| `FORWARD` | `DROP`         |
+
+Docker-related chains were also present. We preserved those rules rather than deleting or resetting them.
+
+## Step 4: Inspect firewall policies and rules
+
+Run:
+
+```
+sudo iptables -S
+```
+
+This displays policies and rules in a command-style format.
+
+Our initial policy output was:
+
+```
+-P INPUT ACCEPT
+-P FORWARD DROP
+-P OUTPUT ACCEPT
+```
+
+Meaning:
+
+- `INPUT ACCEPT` — incoming packets are accepted by default unless another rule blocks them.
+- `OUTPUT ACCEPT` — outgoing packets are accepted by default unless another rule blocks them.
+- `FORWARD DROP` — forwarded packets are dropped by default unless permitted by applicable rules.
+
+Because we were connected to the VM through SSH, we inspected the rules before making changes. We did not change the default policies.
+
+## Step 5: Add a rule to allow SSH traffic
+
+Our Google Cloud VM uses SSH port `22`. We added an explicit rule to allow incoming SSH traffic.
+
+Run:
+
+```
+sudo iptables -I INPUT 1 -p tcp --dport 22 -j ACCEPT
+```
+
+Explanation:
+
+- `-I INPUT 1` — inserts the rule at position 1 in the `INPUT` chain.
+- `-p tcp` — applies the rule to TCP traffic.
+- `--dport 22` — matches destination port 22.
+- `-j ACCEPT` — allows matching packets.
+
+Verify the rule:
+
+```
+sudo iptables -L INPUT -n -v --line-numbers
+```
+
+Observed result: The SSH rule appeared at position 1, and its packet counter increased as traffic matched it.
+
+## Step 6: Add a rule to block port 8080
+
+We selected TCP port `8080` as the test port.
+
+Run:
+
+```
+sudo iptables -A INPUT -p tcp --dport 8080 -j DROP
+```
+
+Explanation:
+
+- `-A INPUT` — appends the rule to the `INPUT` chain.
+- `-p tcp` — selects TCP traffic.
+- `--dport 8080` — matches traffic destined for port 8080.
+- `-j DROP` — silently discards matching packets.
+
+Verify the rules:
+
+```
+sudo iptables -L INPUT -n -v --line-numbers
+```
+
+Expected configuration:
+
+```
+Chain INPUT (policy ACCEPT)
+
+1  ACCEPT  tcp  --  0.0.0.0/0  0.0.0.0/0  tcp dpt:22
+2  DROP    tcp  --  0.0.0.0/0  0.0.0.0/0  tcp dpt:8080
+```
+
+The precise packet counts will vary depending on traffic.
+
+## Step 7: Verify all firewall rules
+
+Run:
+
+```
+sudo iptables -L -n -v
+```
+
+This displays the `INPUT`, `FORWARD`, and `OUTPUT` chains, along with Docker's additional chains.
+
+For a more concise view of policies and rules, run:
+
+```
+sudo iptables -S
+```
+
+Observed result: The SSH `ACCEPT` rule and port 8080 `DROP` rule were present. The original default policies and Docker rules remained unchanged.
+
+## Step 8: Test network connectivity
+
+We initially tried:
+
+```
+ping -c 4 8.8.8.8
+```
+
+Ubuntu reported that `ping` was not installed, so we installed it:
+
+```
+sudo apt install iputils-ping -y
+```
+
+Run the test again:
+
+```
+ping -c 4 8.8.8.8
+```
+
+Our actual result:
+
+```
+4 packets transmitted, 4 received, 0% packet loss
+```
+
+This confirms outgoing ICMP connectivity to `8.8.8.8`. It does not, by itself, verify the TCP port 8080 firewall rule.
+
+## Step 9: Test the blocked port
+
+For the practical lab, use two terminal sessions: one to run a temporary HTTP server and another to test the connection.
+
+### Terminal 1 — Start a test server
+
+Run:
+
+```
+python3 -m http.server 8080 --bind 0.0.0.0
+```
+
+Keep this terminal running.
+
+### Terminal 2 — Test port 8080
+
+On the same VM, open another SSH terminal and run:
+
+```
+curl --max-time 3 -I http://127.0.0.1:8080
+```
+
+Because the `INPUT` rule drops TCP traffic to port 8080, the request should time out while that rule is active. This tests the local loopback path; testing access from a separate machine requires using the VM's reachable IP address and ensuring Google Cloud firewall settings permit the test traffic to reach the VM.
+
+Important distinction: During our Google Cloud session, we stopped the server before running `curl`, so that particular timeout was not conclusive on its own. However, the final firewall listing showed the port 8080 `DROP` rule's packet counter at `3`, confirming that three packets matched the rule.
+
+After the test, stop the server in Terminal 1 with `Ctrl + C`.
+
+## Complete command list for revision
+
+Use this checklist to revise the practical quickly.
+
+1\. Check root access
+
+sudo whoami
+
+&#x20;Copy
+
+2\. Install network utilities if needed
+
+sudo apt update sudo apt install net-tools -y
+
+&#x20;Copy
+
+3\. Display network configuration
+
+ifconfig
+
+&#x20;Copy
+
+4\. Display current firewall rules
+
+sudo iptables -L -n -v
+
+&#x20;Copy
+
+5\. Inspect firewall policies
+
+sudo iptables -S
+
+&#x20;Copy
+
+6\. Allow SSH on port 22
+
+sudo iptables -I INPUT 1 -p tcp --dport 22 -j ACCEPT
+
+&#x20;Copy
+
+7\. Block TCP port 8080
+
+sudo iptables -A INPUT -p tcp --dport 8080 -j DROP
+
+&#x20;Copy
+
+8\. Verify INPUT rules
+
+sudo iptables -L INPUT -n -v --line-numbers
+
+&#x20;Copy
+
+9\. Test network connectivity
+
+sudo apt install iputils-ping -y ping -c 4 8.8.8.8
+
+&#x20;Copy
+
+10\. Start temporary HTTP server
+
+python3 -m http.server 8080 --bind 0.0.0.0
+
+&#x20;Copy
+
+11\. Test port from second terminal
+
+curl --max-time 3 -I http\://127.0.0.1:8080
+
+&#x20;Copy
+
+12\. Final firewall verification
+
+sudo iptables -L -n -v
+
+&#x20;Copy
+
+## Result
+
+Firewall rules were configured using `iptables` on Ubuntu Linux. Incoming TCP traffic to SSH port 22 was explicitly allowed, incoming TCP traffic to port 8080 was configured to be dropped, existing firewall policies were inspected and preserved, and outgoing network connectivity was successfully tested.
+
+Practical note: These rules may not persist after a reboot. For a real cloud VM, always ensure SSH access remains available before making firewall changes.

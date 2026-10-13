@@ -1,0 +1,60 @@
+# T.Y.B.Sc. Data Science – SEM V
+## Minor: Cyber Security Practical
+
+# Module 1 – Practical 2
+
+**Aim:** Network Reconnaissance using Nmap
+
+**Objective:** Identify open ports, running services, and OS fingerprinting of a target machine in a lab network.
+
+**Tool:** Nmap
+
+## Steps
+
+**1. Open Zenmap**
+
+Open the application menu and search for “Zenmap”. Launch the Zenmap window.
+
+**2. Enter the Target IP Address**
+
+Enter the IP address of the neighboring or target lab system in the **Target** field.
+
+**3. Run the Scan**
+
+Run the scan and review the results displayed by Zenmap.
+
+**4. Inspect Nmap Output**
+
+Open the **Nmap Output** tab to inspect the detailed scan output.
+
+**5. Inspect Ports / Hosts**
+
+Open the **Ports / Hosts** tab to inspect the port, protocol, state, and service information.
+
+**6. View Network Topology**
+
+Open the **Topology** tab to view the discovered host in the network topology.
+
+**7. View Host Details**
+
+Open the **Host Details** tab to view host and operating-system-related information reported by the scan.
+
+## Nmap Command (Kali Linux)
+
+**Terminal Command:**
+
+```bash
+nmap -sS -sV -O 172.16.9.129
+```
+
+## Options
+
+1. **-sS — TCP SYN Scan:** Performs a SYN-based TCP scan.
+2. **-sV — Service Detection:** Attempts to identify running services and their versions.
+3. **-O — OS Detection:** Attempts to identify the target operating system.
+
+## Result
+
+Network reconnaissance was performed using Nmap to identify open ports, running services, and their versions. Operating-system detection was attempted, and the scan results were examined using Zenmap.
+
+**Note:** Perform scans only on systems you own or have permission to test.
