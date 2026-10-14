@@ -1,3 +1,77 @@
+According to your uploaded practical file, Module 1 – Practical 7 is Log Analysis and Incident Identification (page 27 onwards). The document lists the steps but does not provide the exact terminal commands, so the commands below are examples matching those steps.
+
+## Practical 7: Log Analysis and Incident Identification
+
+Aim: Analyze authentication logs and identify failed login/brute-force attempts.
+
+### Commands
+
+1\. Start the SSH service
+
+```
+sudo systemctl start ssh
+```
+
+2\. Enable the SSH service
+
+```
+sudo systemctl enable ssh
+```
+
+3\. Create or configure the test user and password
+
+Password: `student`
+
+```
+sudo adduser student
+```
+
+Set the password to `student` when prompted.
+
+4\. Attempt SSH login from the lab machine
+
+```
+ssh student@127.0.0.1
+```
+
+5\. Generate some failed authentication attempts in the controlled lab
+
+```
+ssh wronguser@127.0.0.1
+```
+
+Enter an incorrect password when prompted.
+
+6\. Open the system journal using `journalctl`
+
+```
+sudo journalctl -u ssh
+```
+
+7\. Filter the logs for Failed password entries
+
+```
+sudo journalctl -u ssh | grep "Failed password"
+```
+
+8\. Identify the source IP address, username, and number of failed attempts
+
+```
+sudo journalctl -u ssh | grep "Failed password"
+```
+
+9\. Count the failed authentication entries
+
+```
+sudo journalctl -u ssh | grep -c "Failed password"
+```
+
+Note: These commands are examples based on the steps in your document, not commands copied from it. Run the login tests only on your own lab machine.
+
+
+
+
+
 # Practical 7: Log Analysis and Incident Identification
 
 Aim: Analyze authentication logs and identify failed login/brute-force attempts.
