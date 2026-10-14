@@ -1,3 +1,35 @@
+practical 6 
+1.check network config 
+>>ifconfig
+
+2.Display the current iptables rules
+iptables -L -n -v
+
+3.
+iptables -P INPUT ACCEPT
+iptables -P OUTPUT ACCEPT
+iptables -P FORWARD ACCEPT
+
+4.
+Add rules to allow required traffic
+>>iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+
+5.Allow HTTP traffic:
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+
+6.dd rules to block the required ports
+iptables -A INPUT -p tcp --dport 23 -j DROP
+
+7.verify riles
+iptables -L -n -v
+
+8.test connection 
+http://www.google.com
+
+
+
+
+
 # Practical 6: Firewall Configuration in Linux Using iptables
 
 Aim: To configure firewall rules using `iptables` to control network traffic.
