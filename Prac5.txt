@@ -48,9 +48,14 @@ echo -n "Password1" | openssl dgst -md5 >> hash.txt
 
 ```
 cat hash.txt
+vi hash.txt
+cat hash.txt
 ```
 
-7\. Locate the RockYou wordlist in `/usr/share/wordlists/`.
+7\. Locate the RockYou wordlist in `>> ls /usr/share/wordlists/`.
+
+middle steps
+sudo gzip -d /usr/share/wordlists/rockyou.txt.gz
 
 8\. Run John the Ripper with the RockYou wordlist against `hash.txt`.
 
